@@ -15,21 +15,21 @@ volatile int8_t min_B = 3, sec_B = 0;
 
 // Status gry: 0 = Ustawienia/Pauza, 1 = Tura Lewego, 2 = Tura Prawego
 volatile uint8_t aktywny_gracz = 0;
-volatile uint8_t flaga_konca_czasu = 0; // Informuje g≥Ûwnπ pÍtlÍ o przegranej
-volatile uint8_t flaga_odswiezania = 1; // Flaga do optymalizacji wyúwietlacza
+volatile uint8_t flaga_konca_czasu = 0; // Informuje g≈Ç√≥wnƒÖ pƒôtlƒô o przegranej
+volatile uint8_t flaga_odswiezania = 1; // Flaga do optymalizacji wy≈õwietlacza
 
 // ==========================================
-// FUNKCJE DèWI KOWE
+// FUNKCJE D≈πWIƒòKOWE
 // ==========================================
 void beep_krotki(void) {
-	PORTB |= (1 << PORTB3);  // W≥πcz buzzer
+	PORTB |= (1 << PORTB3);  // W≈ÇƒÖcz buzzer
 	_delay_ms(50);           // Czekaj 50 ms
-	PORTB &= ~(1 << PORTB3); // Wy≥πcz buzzer
+	PORTB &= ~(1 << PORTB3); // Wy≈ÇƒÖcz buzzer
 }
 
 void beep_dlugi(void) {
 	PORTB |= (1 << PORTB3);
-	_delay_ms(500);         // Czekaj sekunde
+	_delay_ms(500);         // Czekaj
 	PORTB &= ~(1 << PORTB3);
 }
 
@@ -38,13 +38,13 @@ void beep_dlugi(void) {
 // ==========================================
 void konfiguracja_sprzetu(void)
 {
-	// Przyciski jako wejúcia (PB0, PB1, PB2)
+	// Przyciski jako wej≈õcia (PB0, PB1, PB2)
 	DDRB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2));
 	PORTB |= (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2);
 	
-	// Buzzer (PB3) jako WYJåCIE
+	// Buzzer (PB3) jako WYJ≈öCIE
 	DDRB |= (1 << PORTB3);
-	PORTB &= ~(1 << PORTB3); // Domyúlnie wy≥πczony
+	PORTB &= ~(1 << PORTB3); // Domy≈õlnie wy≈ÇƒÖczony
 
 	TM1637_init();
 }
@@ -68,19 +68,19 @@ ISR(TIMER1_COMPA_vect)
 			if (min_A > 0) { min_A--; sec_A = 59; }
 			else { aktywny_gracz = 0; flaga_konca_czasu = 1; } // Koniec czasu!
 			} else { sec_A--; }
-			flaga_odswiezania = 1; // ZmieÒ flagÍ, bo up≥ynÍ≥a sekunda
+			flaga_odswiezania = 1; // Zmie≈Ñ flagƒô, bo up≈Çynƒô≈Ça sekunda
 		}
 		else if (aktywny_gracz == 2) {
 			if (sec_B == 0) {
 				if (min_B > 0) { min_B--; sec_B = 59; }
 				else { aktywny_gracz = 0; flaga_konca_czasu = 1; } // Koniec czasu!
 				} else { sec_B--; }
-				flaga_odswiezania = 1; // ZmieÒ flagÍ, bo up≥ynÍ≥a sekunda
+				flaga_odswiezania = 1; // Zmie≈Ñ flagƒô, bo up≈Çynƒô≈Ça sekunda
 			}
 		}
 
 		// ==========================================
-		// G£”WNA P TLA PROGRAMU
+		// G≈Å√ìWNA PƒòTLA PROGRAMU
 		// ==========================================
 		int main(void)
 		{
@@ -89,11 +89,11 @@ ISR(TIMER1_COMPA_vect)
 
 			while (1)
 			{
-				// --- 0. SPRAWDZENIE KO—CA CZASU ---
+				// --- 0. SPRAWDZENIE KO≈ÉCA CZASU ---
 				if (flaga_konca_czasu == 1) {
-					beep_dlugi();          // D≥ugi, alarmowy düwiÍk
-					flaga_konca_czasu = 0; // Kasujemy flagÍ po odtworzeniu düwiÍku
-					flaga_odswiezania = 1; // Odúwieø ekrany na koniec gry
+					beep_dlugi();          // D≈Çugi, alarmowy d≈∫wiƒôk
+					flaga_konca_czasu = 0; // Kasujemy flagƒô po odtworzeniu d≈∫wiƒôku
+					flaga_odswiezania = 1; // Od≈õwie≈º ekrany na koniec gry
 				}
 
 				// --- 1. PRZYCISK CZARNY (PB2) - USTAWIENIA / RESET ---
@@ -102,40 +102,40 @@ ISR(TIMER1_COMPA_vect)
 					if (aktywny_gracz == 0) {
 						wybrana_opcja++;
 						if (wybrana_opcja > 2) wybrana_opcja = 0;
-						beep_krotki(); // PikniÍcie przy zmianie czasu
+						beep_krotki(); // Pikniƒôcie przy zmianie czasu
 						} else {
-						aktywny_gracz = 0; // RESET z trwajπcej gry
-						beep_dlugi();      // Inny düwiÍk dla resetu
+						aktywny_gracz = 0; // RESET z trwajƒÖcej gry
+						beep_dlugi();      // Inny d≈∫wiƒôk dla resetu
 					}
 					
 					min_A = opcje_czasu[wybrana_opcja]; sec_A = 0;
 					min_B = opcje_czasu[wybrana_opcja]; sec_B = 0;
-					flaga_odswiezania = 1; // Wymuú odúwieøenie ekranÛw
+					flaga_odswiezania = 1; // Wymu≈õ od≈õwie≈ºenie ekran√≥w
 					_delay_ms(300);
 				}
 
 				// --- 2. PRZYCISKI GRACZY ---
-				if ((min_A == 0 && sec_A == 0) || (min_B == 0 && sec_B == 0)) { //blokada gry po koÒcu czasu
+				if ((min_A == 0 && sec_A == 0) || (min_B == 0 && sec_B == 0)) { //blokada gry po ko≈Ñcu czasu
 				}
 				else if (!(PINB & (1 << PINB0))) {
 					if (aktywny_gracz != 2) {
-						beep_krotki(); // Piknij, jeúli to faktyczna zmiana
-						flaga_odswiezania = 1; // Wymuú odúwieøenie po zmianie gracza
+						beep_krotki(); // Piknij, je≈õli to faktyczna zmiana
+						flaga_odswiezania = 1; // Wymu≈õ od≈õwie≈ºenie po zmianie gracza
 					}
 					aktywny_gracz = 2;
 					_delay_ms(200);
 				}
 				else if (!(PINB & (1 << PINB1))) {
 					if (aktywny_gracz != 1) {
-						beep_krotki(); // Piknij, jeúli to faktyczna zmiana
-						flaga_odswiezania = 1; // Wymuú odúwieøenie po zmianie gracza
+						beep_krotki(); // Piknij, je≈õli to faktyczna zmiana
+						flaga_odswiezania = 1; // Wymu≈õ od≈õwie≈ºenie po zmianie gracza
 					}
 					aktywny_gracz = 1;
 					_delay_ms(200);
 				}
 				
-				// --- 3. AKTUALIZACJA WYåWIETLACZY ---
-				// Kod wykona siÍ tylko wtedy, gdy flaga odúwieøania wynosi 1
+				// --- 3. AKTUALIZACJA WY≈öWIETLACZY ---
+				// Kod wykona siƒô tylko wtedy, gdy flaga od≈õwie≈ºania wynosi 1
 				if (flaga_odswiezania == 1) {
 					if (aktywny_gracz == 1) {
 						TM1637_show_time(DISPLAY_A, min_A, sec_A, 1);
@@ -150,7 +150,7 @@ ISR(TIMER1_COMPA_vect)
 						TM1637_show_time(DISPLAY_B, min_B, sec_B, 1);
 					}
 					
-					flaga_odswiezania = 0; // Wyzeruj flagÍ
+					flaga_odswiezania = 0; // Wyzeruj flagƒô
 				}
 			}
 		}
